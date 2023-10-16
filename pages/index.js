@@ -1,17 +1,7 @@
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import Seo from '../components/Seo';
 
-export default function Home() {
-  const [bestSellerList, setBestSellerList] = useState([]);
-  useEffect(() => {
-    (async () => {
-      const { results } = await (
-        await fetch('https://books-api.nomadcoders.workers.dev/lists')
-      ).json();
-      setBestSellerList(results);
-    })();
-  }, []);
+export default function Home({ bestSellerList }) {
   return (
     <div>
       <Seo title='Home' />
@@ -54,4 +44,18 @@ export default function Home() {
       `}</style>
     </div>
   );
+}
+
+export async function getServerSideProps() {
+  const response = await fetch(
+    'https://books-api.nomadcoders.workers.dev/lists'
+  );
+  const { results } = await response.json();
+  const bestSellerList = results;
+
+  return {
+    props: {
+      bestSellerList,
+    },
+  };
 }
